@@ -1,0 +1,916 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "- This document is the interface that SyncSign exposes to developers.\n- API Key for testing: ad0f5999-5669-4101-82e2-ec675028ead5\n- Register at https://portal.sync-sign.com and get your API key on the settings page.\n- Learn more details about API here: https://dev.sync-sign.com/hubsdk/intro/difference.html\n- If you have any questions, please contact us at dev@sync-sign.com and we will get back to you asap.",
+    "version": "2.0.0",
+    "title": "SyncSign API"
+  },
+  "host": "api.sync-sign.com",
+  "basePath": "/v2",
+  "tags": [
+    {
+      "name": "user"
+    },
+    {
+      "name": "device"
+    },
+    {
+      "name": "node"
+    },
+    {
+      "name": "render"
+    }
+  ],
+  "schemes": [
+    "https"
+  ],
+  "paths": {
+    "/key/{api_key}": {
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "description": "Get user information.",
+        "operationId": "userGetUserInfo",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "api_key",
+            "in": "path",
+            "description": "Browse  https://portal.sync-sign.com/#/setting and get your own api key",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "UserInfo",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "number",
+                  "enum": [
+                    200
+                  ]
+                },
+                "requestId": {
+                  "type": "string"
+                },
+                "data": {
+                  "$ref": "#/definitions/User"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/key/{api_key}/devices": {
+      "get": {
+        "tags": [
+          "device"
+        ],
+        "description": "Get the list of devices through api_key.",
+        "operationId": "userGetDevices",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "api_key",
+            "in": "path",
+            "description": "Browse  https://portal.sync-sign.com/#/setting and get your own api key",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User's device list",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "number",
+                  "enum": [
+                    200
+                  ]
+                },
+                "requestId": {
+                  "type": "string"
+                },
+                "data": {
+                  "$ref": "#/definitions/ArrayOfUserDevice"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/key/{api_key}/devices/{sn}": {
+      "get": {
+        "tags": [
+          "device"
+        ],
+        "description": "Get Hub details through api_key and SN.",
+        "operationId": "userGetDeviceDetail",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "api_key",
+            "in": "path",
+            "description": "Browse  https://portal.sync-sign.com/#/setting and get your own api key",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "sn",
+            "in": "path",
+            "description": "You can get the serial number of the Hub by calling the API that  \"/key/{api_key}/devices\"",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Hub details",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "number",
+                  "enum": [
+                    200
+                  ]
+                },
+                "requestId": {
+                  "type": "string"
+                },
+                "data": {
+                  "$ref": "#/definitions/Device"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/key/{api_key}/devices/{sn}/nodes": {
+      "get": {
+        "tags": [
+          "node"
+        ],
+        "description": "Get all the Node associated with a Hub",
+        "operationId": "userGetNodesByThingName",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "api_key",
+            "in": "path",
+            "description": "Browse  https://portal.sync-sign.com/#/setting and get your own api key",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "sn",
+            "in": "path",
+            "description": "You can get the serial number of the Hub by calling the API that  \"/key/{api_key}/devices\"",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "All displays associated with the Hub",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "number",
+                  "enum": [
+                    200
+                  ]
+                },
+                "requestId": {
+                  "type": "string"
+                },
+                "data": {
+                  "$ref": "#/definitions/ArrayOfNode"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/key/{api_key}/devices/{sn}/nodes/{node_id}": {
+      "get": {
+        "tags": [
+          "node"
+        ],
+        "description": "Get the details of a Node through api_key, device's SN and node_id.",
+        "operationId": "userGetNodeInfoWithDeviceSn",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "api_key",
+            "in": "path",
+            "description": "Browse  https://portal.sync-sign.com/#/setting and get your own api key",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "node_id",
+            "in": "path",
+            "description": "You can get the id of the Node by calling the API that  \"/key/{api_key}/devices/{sn}/nodes\"",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "sn",
+            "in": "path",
+            "description": "You can get the serial number of the Hub by calling the API that  \"/key/{api_key}/devices\"",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Details of a Display",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "number",
+                  "enum": [
+                    200
+                  ]
+                },
+                "requestId": {
+                  "type": "string"
+                },
+                "data": {
+                  "$ref": "#/definitions/Node"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/key/{api_key}/nodes": {
+      "get": {
+        "tags": [
+          "node"
+        ],
+        "description": "Get all Display related to the user.",
+        "operationId": "userGetNodes",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "api_key",
+            "in": "path",
+            "description": "Browse  https://portal.sync-sign.com/#/setting and get your own api key",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "All Display related to the user",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "number",
+                  "enum": [
+                    200
+                  ]
+                },
+                "requestId": {
+                  "type": "string"
+                },
+                "data": {
+                  "$ref": "#/definitions/ArrayOfNode"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/key/{api_key}/nodes/{node_id}": {
+      "get": {
+        "tags": [
+          "node"
+        ],
+        "description": "Get details of a Display related to the user",
+        "operationId": "userGetNodeInfo",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "api_key",
+            "in": "path",
+            "description": "Browse  https://portal.sync-sign.com/#/setting and get your own api key",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "node_id",
+            "in": "path",
+            "description": "You can get the id of the Node by calling the API that  \"/key/{api_key}/nodes\"",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Display details",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "number",
+                  "enum": [
+                    200
+                  ]
+                },
+                "requestId": {
+                  "type": "string"
+                },
+                "data": {
+                  "$ref": "#/definitions/Node"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/key/{api_key}/nodes/{node_id}/renders": {
+      "post": {
+        "tags": [
+          "render"
+        ],
+        "description": "Render a Node's screen",
+        "operationId": "postNodeRender",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "api_key",
+            "in": "path",
+            "description": "Browse  https://portal.sync-sign.com/#/setting and get your own api key",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "node_id",
+            "in": "path",
+            "description": "You can get the id of the Node by calling the API that  \"/key/{api_key}/nodes\"",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "Render",
+            "description": "Render the content of the Node's screen. This is an example, if you want to know more, please contact us at dev@sync-sign.com",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RequestRenderBody"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Rendering result",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "number",
+                  "enum": [
+                    200
+                  ]
+                },
+                "requestId": {
+                  "type": "string"
+                },
+                "data": {
+                  "$ref": "#/definitions/Render"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/key/{api_key}/renders": {
+      "post": {
+        "tags": [
+          "render"
+        ],
+        "description": "Rendering screens of multiple nodes",
+        "operationId": "postNodesRender",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "api_key",
+            "in": "path",
+            "description": "Browse  https://portal.sync-sign.com/#/setting and get your own api key",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "Render",
+            "description": "Render the content of the Node's screen. This is an example, if you want to know more, please contact us at dev@sync-sign.com",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RequestRendersBody"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Rendering result",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "number",
+                  "enum": [
+                    200
+                  ]
+                },
+                "requestId": {
+                  "type": "string"
+                },
+                "data": {
+                  "$ref": "#/definitions/ArrayOfRender"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/key/{api_key}/renders/{render_id}": {
+      "get": {
+        "tags": [
+          "render"
+        ],
+        "description": "Get the content and results of a rendering. isRender returns true if the rendering event has been successfully executed.",
+        "operationId": "getNodeRenderItem",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "render_id",
+            "in": "path",
+            "description": "Rendered Id, every time you call the postRender API, you get a new one.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "api_key",
+            "in": "path",
+            "description": "Browse  https://portal.sync-sign.com/#/setting and get your own api key",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200 response",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "number",
+                  "enum": [
+                    200
+                  ]
+                },
+                "requestId": {
+                  "type": "string"
+                },
+                "data": {
+                  "$ref": "#/definitions/Render"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "User": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "phoneNumber": {
+          "type": "string"
+        },
+        "provider": {
+          "type": "string"
+        },
+        "region": {
+          "type": "string"
+        },
+        "nickname": {
+          "type": "string"
+        },
+        "logoInfo": {
+          "type": "object"
+        },
+        "defaultTemplates": {
+          "type": "object"
+        },
+        "devicesLastModified": {
+          "type": "number"
+        },
+        "calendarsLastModified": {
+          "type": "number"
+        }
+      }
+    },
+    "ArrayOfNode": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Node"
+      }
+    },
+    "Device": {
+      "type": "object",
+      "required": [
+        "thingName"
+      ],
+      "properties": {
+        "thingName": {
+          "type": "string"
+        },
+        "region": {
+          "type": "string",
+          "enum": [
+            "us-west-2"
+          ]
+        },
+        "thingType": {
+          "type": "string"
+        },
+        "friendlyName": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string"
+        },
+        "updatedAt": {
+          "type": "string"
+        }
+      }
+    },
+    "RequestRenderBody": {
+      "type": "object",
+      "properties": {
+        "layout": {
+          "type": "object"
+        }
+      },
+      "example": {
+        "layout": {
+          "background": {
+            "enableButtonZone": false
+          },
+          "items": [
+            {
+              "type": "TEXT",
+              "data": {
+                "text": "Hello World!",
+                "id": "NOTE_AVAILABLE",
+                "font": "YANONE_KAFFEESATZ_44_B",
+                "text-align": "CENTER",
+                "block": {
+                  "x": 72,
+                  "y": 116,
+                  "w": 256,
+                  "h": 56
+                }
+              }
+            },
+            {
+              "type": "RECTANGLE",
+              "data": {
+                "fillColor": "DASH",
+                "strokeColor": "BLACK",
+                "strokeThickness": 2,
+                "block": {
+                  "x": 72,
+                  "y": 168,
+                  "w": 256,
+                  "h": 4
+                }
+              }
+            },
+            {
+              "type": "RECTANGLE",
+              "data": {
+                "fillColor": "DASH",
+                "strokeColor": "BLACK",
+                "strokeThickness": 2,
+                "block": {
+                  "x": 72,
+                  "y": 118,
+                  "w": 256,
+                  "h": 4
+                }
+              }
+            },
+            {
+              "type": "POLL_RATE",
+              "data": {
+                "rate": 10000
+              }
+            }
+          ]
+        }
+      }
+    },
+    "RequestRendersBody": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Render"
+      },
+      "example": [
+        {
+          "nodeId": "xxxxxxxxxxx",
+          "layout": {
+            "background": {
+              "enableButtonZone": false
+            },
+            "items": [
+              {
+                "type": "TEXT",
+                "data": {
+                  "text": "Hello World!",
+                  "id": "NOTE_AVAILABLE",
+                  "font": "YANONE_KAFFEESATZ_44_B",
+                  "text-align": "CENTER",
+                  "block": {
+                    "x": 72,
+                    "y": 116,
+                    "w": 256,
+                    "h": 56
+                  }
+                }
+              },
+              {
+                "type": "RECTANGLE",
+                "data": {
+                  "fillColor": "DASH",
+                  "strokeColor": "BLACK",
+                  "strokeThickness": 2,
+                  "block": {
+                    "x": 72,
+                    "y": 168,
+                    "w": 256,
+                    "h": 4
+                  }
+                }
+              },
+              {
+                "type": "RECTANGLE",
+                "data": {
+                  "fillColor": "DASH",
+                  "strokeColor": "BLACK",
+                  "strokeThickness": 2,
+                  "block": {
+                    "x": 72,
+                    "y": 118,
+                    "w": 256,
+                    "h": 4
+                  }
+                }
+              },
+              {
+                "type": "POLL_RATE",
+                "data": {
+                  "rate": 10000
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "Render": {
+      "type": "object",
+      "properties": {
+        "nodeId": {
+          "type": "string"
+        },
+        "layout": {
+          "type": "object",
+          "properties": {}
+        },
+        "renderId": {
+          "type": "string"
+        },
+        "isRendered": {
+          "type": "boolean"
+        },
+        "expires": {
+          "type": "number"
+        }
+      }
+    },
+    "ArrayOfRender": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Render"
+      }
+    },
+    "Node": {
+      "type": "object",
+      "required": [
+        "nodeId",
+        "thingName",
+        "type"
+      ],
+      "properties": {
+        "nodeId": {
+          "type": "string",
+          "description": "Node ID"
+        },
+        "thingName": {
+          "type": "string",
+          "description": "Hub SN"
+        },
+        "type": {
+          "type": "string",
+          "description": "Node type"
+        },
+        "model": {
+          "type": "string",
+          "description": "Node size"
+        },
+        "associated": {
+          "type": "boolean",
+          "description": "Pairing status"
+        },
+        "name": {
+          "type": "string",
+          "description": "Name"
+        },
+        "version": {
+          "type": "number",
+          "description": "Firmware version"
+        },
+        "onlined": {
+          "type": "boolean",
+          "description": "Online status"
+        },
+        "panId": {
+          "type": "number",
+          "description": "Network (ZigBee or SyncNet network) ID (in decimal) that node currently at"
+        },
+        "renderId": {
+          "type": "string",
+          "description": "Node ID last rendered"
+        },
+        "lastSeen": {
+          "type": "number",
+          "description": "Last update timestamp(ms)"
+        },
+        "signalLevel": {
+          "type": "number",
+          "description": "Signal"
+        },
+        "batteryLevel": {
+          "type": "number",
+          "description": "Battery level"
+        },
+        "calendar": {
+          "type": "object",
+          "description": "Calendar authorized",
+          "properties": {
+            "calendarId": {
+              "type": "string"
+            },
+            "calendarType": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "calendarProviderId": {
+              "type": "string"
+            }
+          }
+        },
+        "calendarLastModified": {
+          "type": "number"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Paired at"
+        },
+        "updatedAt": {
+          "type": "string"
+        }
+      }
+    },
+    "UserDevice": {
+      "type": "object",
+      "properties": {
+        "thingName": {
+          "type": "string"
+        },
+        "userId": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "bind",
+            "unbind"
+          ]
+        },
+        "sn": {
+          "type": "string"
+        },
+        "info": {
+          "type": "object",
+          "properties": {
+            "thingName": {
+              "type": "string"
+            },
+            "model": {
+              "type": "string"
+            },
+            "region": {
+              "type": "string"
+            },
+            "thingType": {
+              "type": "string"
+            },
+            "friendlyName": {
+              "type": "string"
+            },
+            "createdAt": {
+              "type": "string"
+            },
+            "updatedAt": {
+              "type": "string"
+            }
+          }
+        },
+        "createdAt": {
+          "type": "string"
+        },
+        "updatedAt": {
+          "type": "string"
+        },
+        "region": {
+          "type": "string"
+        }
+      }
+    },
+    "ArrayOfUserDevice": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/UserDevice"
+      }
+    }
+  }
+}

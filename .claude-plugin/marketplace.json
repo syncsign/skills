@@ -1,0 +1,29 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "syncsign-marketplace",
+  "description": "SyncSign Web API assistant for account info, hubs, displays, node details, and rendering operations through the public API key routes.",
+  "owner": {
+    "name": "SyncSign"
+  },
+  "plugins": [
+    {
+      "name": "syncsign-api",
+      "description": "SyncSign assistant for hubs, displays, nodes, and render operations using the public Web API.",
+      "version": "1.0.0",
+      "author": {
+        "name": "SyncSign"
+      },
+      "source": "./plugins/syncsign-api",
+      "license": "MIT",
+      "keywords": [
+        "syncsign",
+        "display",
+        "hub",
+        "node",
+        "render",
+        "signage",
+        "api key"
+      ]
+    }
+  ]
+}

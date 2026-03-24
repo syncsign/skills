@@ -1,0 +1,19 @@
+{
+  "name": "syncsign-api",
+  "version": "1.0.0",
+  "description": "SyncSign Web API assistant for account info, hubs, displays, node details, and rendering operations through the public API key routes.",
+  "author": {
+    "name": "SyncSign"
+  },
+  "license": "MIT",
+  "keywords": [
+    "syncsign",
+    "display",
+    "hub",
+    "node",
+    "render",
+    "signage",
+    "api key"
+  ],
+  "skills": "./skills/syncsign-api"
+}
