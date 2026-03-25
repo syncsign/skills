@@ -4,6 +4,8 @@ Operate SyncSign Hubs and Displays from natural language through the public Sync
 
 ## Install
 
+This repository now uses a single canonical source tree and two generated release artifacts.
+
 **Option 1 - Claude Code plugin marketplace**
 
 ```bash
@@ -16,13 +18,40 @@ Or install the specific plugin from that marketplace:
 /plugin install syncsign-api@syncsign-marketplace
 ```
 
+Claude uses the generated package at `plugins/syncsign-api`.
+
 **Option 2 - npx (skills.sh)**
 
 ```bash
-npx skills add syncsign/skills
+npx skills add <owner>/<repo@syncsign-api>
 ```
 
-Both methods install the single root skill `syncsign-api`.
+For repo-based `skills.sh` installs, the repository should expose the `syncsign-api` skill entry. The generated runtime artifact intended for `npx` distribution lives at `packages/npx/syncsign-api`.
+
+Both methods install the same `syncsign-api` capability from different release artifacts.
+
+## Build Artifacts
+
+Canonical source files live at the repository root.
+
+Generated outputs:
+- `packages/npx/syncsign-api` for `skills.sh` runtime packaging
+- `plugins/syncsign-api` for Claude marketplace packaging
+
+Regenerate both packages with:
+
+```bash
+python scripts/build_release_artifacts.py
+```
+
+Or regenerate just one target:
+
+```bash
+python scripts/build_runtime_package.py
+python scripts/build_claude_plugin.py
+```
+
+Do not edit files under `packages/npx/syncsign-api` or `plugins/syncsign-api` directly.
 
 ## Configuration
 
@@ -34,8 +63,11 @@ Create or edit the `.env` file in the current Skill runtime root with:
 
 ```env
 SYNCSIGN_API_KEY=your_syncsign_api_key
-SYNCSIGN_API_BASE_URL=https://api.sync-sign.com/v2
 ```
+
+If `.env` does not exist yet, create it or copy `env.example` to `.env` first.
+
+`SYNCSIGN_API_BASE_URL` is optional. Most users should leave it unset and use the built-in default API endpoint.
 
 If you do not have an API key yet:
 
@@ -46,17 +78,17 @@ If you do not have an API key yet:
 
 `.env` is local-only and git-ignored.
 
-## Claude Packaging
+## Core Capabilities
 
-The canonical source layout stays at the repository root so `npx skills add` and other agents can read the repo directly.
-
-Claude marketplace publishing uses a generated, self-contained package at `plugins/syncsign-api`. Regenerate that package with:
-
-```bash
-python scripts/build_claude_plugin.py
-```
-
-Do not edit files under `plugins/syncsign-api` directly. Treat that directory as a generated release artifact.
+This skill currently supports:
+- Account information lookup for the saved API key.
+- Hub and device inventory lookup.
+- Hub detail lookup by serial number.
+- Display list and detail lookup by node ID or Hub serial number.
+- Calendar binding and calendar subscription diagnosis for supported Display models `D75C-LEWI`, `D42C-LE`, and `D29C-LE`.
+- Display sync troubleshooting based only on live API fields.
+- Render submission to one Display or multiple Displays.
+- Render status lookup by render ID.
 
 ## Included Public API Endpoints
 
@@ -73,7 +105,7 @@ This project currently covers every route published in the SyncSign public Swagg
 - `POST /key/{api_key}/renders`
 - `GET /key/{api_key}/renders/{render_id}`
 
-Each route is implemented as an atomic Python script under `scripts/`.
+Each route is implemented as an atomic Python script under `scripts/` in the canonical source tree and is copied into both generated artifacts.
 
 ## What You Can Ask
 
@@ -86,6 +118,7 @@ Each route is implemented as an atomic Python script under `scripts/`.
 > "Show details for hub SN ABCD1234."
 > "List all displays attached to hub SN ABCD1234."
 > "Get display details for node 123456."
+> "Diagnose why display node 123456 is not syncing its calendar refresh."
 
 **Rendering**
 > "Render this layout to node 123456."
@@ -94,4 +127,5 @@ Each route is implemented as an atomic Python script under `scripts/`.
 
 ## Privacy
 
-Credentials are stored only in the `.env` file in the current Skill runtime root, which is git-ignored. This public skill persists the API key and optional base URL only.
+Credentials are stored only in the `.env` file in the current Skill runtime root, which is git-ignored. This public skill persists the API key and an optional base URL override only.
+

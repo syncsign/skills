@@ -9,6 +9,25 @@ tools: [ "run_shell_command" ]
 
 Use this skill whenever the user is asking about SyncSign account info, Hubs, Displays, nodes, render jobs, or screen rendering through the public SyncSign Web API.
 
+## What This Skill Can Do
+
+If the user asks what this skill can do, answer from the capability list below.
+
+This skill can:
+- Show SyncSign account information for the saved API key.
+- List Hubs and other devices under the saved API key.
+- List Displays globally or under a specific Hub.
+- Get detailed Hub information by serial number.
+- Get detailed Display information by node ID, or by Hub serial number plus node ID.
+- Diagnose supported calendar Display sync issues for models `D75C-LEWI`, `D42C-LE`, and `D29C-LE` using live API data.
+- Check whether a supported Display has a calendar bound.
+- Check whether a supported Display calendar subscription is healthy by verifying `watchResourceId` and `watchExpiration`.
+- Identify whether an offline supported Display is more likely affected by Hub status, low battery, or low signal, based only on fields returned by the API.
+- Submit render jobs to one Display or multiple Displays.
+- Check render job status by render ID.
+
+Do not claim unsupported capabilities. Do not promise diagnosis beyond the fields actually returned by the API.
+
 ## Non-Negotiable Agent Rules
 
 1. Use only the atomic scripts in `scripts/` for business actions.
@@ -25,7 +44,7 @@ Forbidden examples after `SYNCSIGN_API_KEY_MISSING`:
 - `Get-ChildItem Env:`
 - `Get-ChildItem -Recurse -Filter .env`
 - searching for `SYNCSIGN_API_KEY`
-- reading `plugins/` to hunt for credentials
+- reading generated packages to hunt for credentials
 
 ## First-Time Setup
 
@@ -37,11 +56,11 @@ Do not proactively read or inspect the `.env` file. Credentials are checked auto
 
 SyncSign API key is not configured.
 Open the SyncSign client and go to Settings.
-Copy your API Key and add it to the `.env` file in the current Skill runtime root:
+Copy your API Key and add it to the `.env` file in the current Skill runtime root.
+If the file does not exist yet, create it first.
 
 ```env
 SYNCSIGN_API_KEY=your_api_key_here
-SYNCSIGN_API_BASE_URL=https://api.sync-sign.com/v2
 ```
 
 Save the file and let me know when it is ready.
@@ -61,30 +80,30 @@ Examples:
 
 ## Command Base Path
 
-Run all commands from the runtime root shown below, not from a nested folder. Use the path variant that exists in the current install:
+Run all commands from the generated runtime root shown below, not from the source repo root, unless you are explicitly maintaining this project locally.
 
-- Source repo or `npx skills add`: `python scripts/syncsign_list_nodes.py`
+- Generated `npx` runtime package: `python scripts/syncsign_list_nodes.py`
 - Claude marketplace package: `python scripts/syncsign_list_nodes.py`
+- Source repo for maintainers only: `python scripts/syncsign_list_nodes.py`
 
 ## Runtime Layout
 
-Source repo and `npx skills add` layout:
+Generated `npx` runtime package layout:
 
 ```text
 runtime-root/
 |- SKILL.md
 |- README.md
 |- requirements.txt
+|- env.example
+|- render-batch.json
+|- render-single.json
+|- syncsign-swagger.json
 |- scripts/
-|  |- build_claude_plugin.py
 |  \- syncsign_*.py
-|- common/
-|  |- syncsign_auth.py
-|  \- syncsign_client.py
-|- .claude-plugin/
-|  |- marketplace.json
-|  \- syncsign-swagger.json
-\- plugins/
+\- common/
+   |- syncsign_auth.py
+   \- syncsign_client.py
 ```
 
 Claude marketplace package layout:
@@ -94,12 +113,34 @@ runtime-root/
 |- .claude-plugin/
 |  \- plugin.json
 |- requirements.txt
+|- env.example
+|- syncsign-swagger.json
 |- scripts/
+|  \- syncsign_*.py
 |- common/
 |- skills/
 |  \- syncsign-api/
 |     \- SKILL.md
-\- syncsign-swagger.json
+\- README.generated.md
+```
+
+Canonical source repo layout for maintainers:
+
+```text
+source-root/
+|- common/
+|- scripts/
+|  |- build_release_artifacts.py
+|  |- build_runtime_package.py
+|  |- build_claude_plugin.py
+|  \- syncsign_*.py
+|- packages/
+|  \- npx/
+|     \- syncsign-api/
+|- plugins/
+|  \- syncsign-api/
+|- README.md
+\- SKILL.md
 ```
 
 ## Output Contract
@@ -137,6 +178,8 @@ runtime-root/
 - `python scripts/syncsign_get_device_node.py --sn <SN> --node_id <NODE_ID>`
 - `python scripts/syncsign_list_nodes.py`
 - `python scripts/syncsign_get_node.py --node_id <NODE_ID>`
+- `python scripts/syncsign_diagnose_display_sync.py --node_id <NODE_ID>`
+- `python scripts/syncsign_diagnose_display_sync.py --sn <SN> --node_id <NODE_ID>`
 
 ### Rendering
 - `python scripts/syncsign_post_node_render.py --node_id <NODE_ID> --body-file <PATH>`
@@ -158,3 +201,93 @@ Covered routes:
 - `POST /key/{api_key}/nodes/{node_id}/renders`
 - `POST /key/{api_key}/renders`
 - `GET /key/{api_key}/renders/{render_id}`
+## Display Sync Troubleshooting
+
+Use this workflow when the user says a Display is not syncing or refreshing correctly.
+
+This troubleshooting flow only applies to these Display models:
+- `D75C-LEWI`
+- `D42C-LE`
+- `D29C-LE`
+
+For any other Display model, say that this troubleshooting flow is not available for that model and refer the user to SyncSign Support.
+
+### Evidence Rule
+
+Only diagnose from fields that are actually returned by the API response. Do not guess or invent missing states.
+
+If the API does not provide enough information for the next required decision, say exactly that there is not enough information from the API to continue the diagnosis. Then refer the user to SyncSign Support:
+- `https://help.sync-sign.com`
+- `help@sync-sign.com`
+
+Never hallucinate Hub status, Display status, calendar status, battery cause, signal cause, or subscription status when the required API fields are missing.
+
+### Required Concepts
+
+- `Calendar bound`: the Display response includes a `calendar` object with calendar information.
+- `Calendar subscription successful`: inside `calendar`, both `watchResourceId` and `watchExpiration` are present, and `watchExpiration` is still in the future and within the next 24 hours.
+- `Calendar subscription failed`: `watchResourceId` is missing, `watchExpiration` is missing, or `watchExpiration` is already expired. Treat an expired subscription exactly the same as a missing subscription.
+
+### Required Diagnostic Order
+
+1. Check whether the Display is online.
+2. If the Display is online:
+   - Check whether a calendar is bound.
+   - If a calendar is bound, check whether the calendar subscription is successful.
+3. If the Display is offline:
+   - Check whether the nearby Hub is online.
+   - If the Hub is offline, prioritize restoring the Hub first.
+   - If the Hub is online, inspect battery level and signal level from the Display detail.
+
+### Preferred Command
+
+Use the diagnosis script whenever possible:
+
+```bash
+python scripts/syncsign_diagnose_display_sync.py --node_id <NODE_ID>
+python scripts/syncsign_diagnose_display_sync.py --sn <SN> --node_id <NODE_ID>
+```
+
+### Online Display Guidance
+
+- If the Display is online and no calendar is bound, tell the user to bind the calendar from the Display configuration page in the SyncSign client.
+- If the Display is online and the calendar is bound but the subscription fields are missing, tell the user the calendar subscription failed. Instruct them to unbind the calendar and bind it again, then check whether the Display can sync and refresh.
+- If the Display is online and `watchExpiration` is expired, treat that as the same subscription failure and give the same unbind-and-rebind guidance.
+
+### Offline Display Guidance
+
+If the Display is offline, first explain that the battery and signal values returned by the API are the last values reported while the Display was still online.
+
+For Displays paired with a Hub:
+
+- If the Hub is offline, tell the user to restore the Hub first by power cycling it or re-adding it in the app.
+- If the Hub is online, the likely causes to check are low battery and low signal.
+- If the API does not provide enough information to confirm the nearby Hub status, do not guess. Tell the user there is not enough information from the API and refer them to SyncSign Support.
+
+Thresholds:
+
+- Battery below `15%` needs attention.
+- Signal below `30%` needs attention.
+
+Battery guidance by model:
+
+- `D75C-LEWI` and `D42C-LE`: charge the Display with the matching power adapter and power cable.
+- `D29C-LE`: replace the `AA 1.5V` batteries.
+
+Signal guidance:
+
+- Reposition the Hub and Display higher in the space when possible.
+- Avoid obstacles and signal interference sources.
+- Recommend keeping signal above `30%` for stable operation.
+
+If the Display is offline, the Hub is online, and the returned API fields do not show a clear battery or signal issue, do not invent another cause. Say there is not enough information from the API and refer the user to SyncSign Support.
+
+### Real Signal Check in the SyncSignr App
+
+Tell the user they can check the real current Display signal like this:
+
+1. Press the pinhole button on the Display for `1 second`.
+2. Open the Display configuration page in the `SyncSignr` app.
+3. Check whether `Last Seen` updates to the current time.
+4. If `Last Seen` updates to the current time, the displayed signal level is the real current signal level at that position.
+

@@ -81,10 +81,9 @@ def print_credentials_missing_and_exit():
     print("SyncSign API key is not configured.", file=sys.stderr)
     print("Open the SyncSign client and go to Settings.", file=sys.stderr)
     print("Copy your API Key and add it to the .env file in the current Skill runtime root.", file=sys.stderr)
-    print("Required:", file=sys.stderr)
+    print("If the file does not exist yet, create it first.", file=sys.stderr)
+    print(f"Target file: {ENV_PATH}", file=sys.stderr)
     print("  SYNCSIGN_API_KEY=your_api_key_here", file=sys.stderr)
-    print("Optional:", file=sys.stderr)
-    print(f"  SYNCSIGN_API_BASE_URL={DEFAULT_BASE_URL}", file=sys.stderr)
     print("Save the file and rerun the command.", file=sys.stderr)
     sys.exit(2)
 
@@ -94,3 +93,4 @@ def load_saved_credentials_or_exit():
     if not credentials.get("api_key"):
         print_credentials_missing_and_exit()
     return credentials
+
