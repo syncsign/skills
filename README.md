@@ -90,6 +90,18 @@ This skill currently supports:
 - Render submission to one Display or multiple Displays.
 - Render status lookup by render ID.
 
+## Rendering Knowledge Base
+
+Custom Display rendering guidance now lives in `references/display-render-layout-knowledge.md`.
+
+That reference summarizes:
+- the official `layout` field semantics
+- item and background field meanings
+- calendar template placeholder IDs and `BUSY` / `FREE` block behavior
+- generation rules for custom layouts such as `4x4` tables
+
+Use it when the user asks for custom Display composition rather than a simple text-only render.
+
 ## Included Public API Endpoints
 
 This project currently covers every route published in the SyncSign public Swagger document (`v2.0.0`):

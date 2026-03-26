@@ -7,3 +7,7 @@ Do not edit files in this directory directly. Update the canonical source files 
 ```bash
 python scripts/build_release_artifacts.py
 ```
+
+Custom layout guidance is bundled under:
+
+`skills/syncsign-api/references/display-render-layout-knowledge.md`

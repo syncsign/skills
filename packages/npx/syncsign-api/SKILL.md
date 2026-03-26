@@ -37,6 +37,7 @@ Do not claim unsupported capabilities. Do not promise diagnosis beyond the field
 5. Never attempt login, password exchange, token recovery, or credential guessing.
 6. If any SyncSign script exits with code `2` or stderr contains `SYNCSIGN_API_KEY_MISSING`, stop immediately.
 7. After `SYNCSIGN_API_KEY_MISSING`, do not run any more diagnostic commands. Do not inspect `.env`. Do not continue exploring. Respond with the fixed setup message and end the turn.
+8. Unless the user or maintainer explicitly asks, do not add extra docs, code, scripts, sample files, or other repository artifacts just to satisfy a one-off operational request. Prefer direct execution or inline JSON instead.
 
 Forbidden examples after `SYNCSIGN_API_KEY_MISSING`:
 - `Get-Content .env`
@@ -96,8 +97,9 @@ runtime-root/
 |- README.md
 |- requirements.txt
 |- env.example
-|- render-batch.json
-|- render-single.json
+|- examples/
+|  |- render-batch.json
+|  \- render-single.json
 |- syncsign-swagger.json
 |- scripts/
 |  \- syncsign_*.py
@@ -112,6 +114,9 @@ Claude marketplace package layout:
 runtime-root/
 |- .claude-plugin/
 |  \- plugin.json
+|- examples/
+|  |- render-batch.json
+|  \- render-single.json
 |- requirements.txt
 |- env.example
 |- syncsign-swagger.json
@@ -129,6 +134,10 @@ Canonical source repo layout for maintainers:
 ```text
 source-root/
 |- common/
+|- examples/
+|  |- render-batch.json
+|  \- render-single.json
+|- references/
 |- scripts/
 |  |- build_release_artifacts.py
 |  |- build_runtime_package.py
@@ -163,6 +172,29 @@ source-root/
    - Prefer `--body-file` for larger JSON payloads
    - After a render request, use `syncsign_get_render.py` when the user asks for final execution status or when you need to confirm delivery
 4. The public routes in this skill authenticate only with the SyncSign API key saved in `.env`.
+
+## Custom Rendering Reference
+
+For custom Display composition, read the co-located `references/display-render-layout-knowledge.md`.
+
+Use these repository-validated canvas sizes for layout coordinates in this project:
+- `7.5 Inch`: `800 x 480`
+- `4.2 Inch`: `400 x 300`
+- `2.9 Inch`: `296 x 128`
+
+If the official Hub SDK examples show different dimensions for `7.5 Inch`, prefer these repository-validated dimensions when rendering through this skill unless the user explicitly says otherwise.
+
+Example request bodies are stored under `examples/`:
+- `examples/render-single.json`: sample body for `syncsign_post_node_render.py` when rendering to one Display.
+- `examples/render-batch.json`: sample body for `syncsign_post_nodes_render.py` when rendering the same or different layouts to multiple Displays.
+
+Use that reference when the user asks for:
+- custom `layout` JSON authoring
+- tables, dashboards, cards, or mixed text-and-shape compositions
+- calendar template customization with `BUSY` / `FREE` blocks
+- calendar placeholder IDs such as `ONGOING_EVENT_SUMMARY` or `UPCOMING_1_TIME`
+
+That knowledge base summarizes the official SyncSign rendering and calendar template docs and includes a ready-to-adapt `4x4` table example.
 
 ## Scripts
 

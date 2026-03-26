@@ -49,6 +49,12 @@ SYNCSIGN_API_KEY=your_syncsign_api_key
 ```
 
 3. Save the file, then rerun your request.
+
+## Custom Rendering Reference
+
+For custom layout and calendar-template authoring, see:
+
+`references/display-render-layout-knowledge.md`
 """
 
 CLAUDE_NOTICE = """# Generated Package
@@ -60,6 +66,10 @@ Do not edit files in this directory directly. Update the canonical source files 
 ```bash
 python scripts/build_release_artifacts.py
 ```
+
+Custom layout guidance is bundled under:
+
+`skills/syncsign-api/references/display-render-layout-knowledge.md`
 """
 
 COMMON_FILE_COPIES = [
@@ -70,15 +80,26 @@ COMMON_FILE_COPIES = [
     ("GEMINI.md", "GEMINI.md"),
 ]
 
-RUNTIME_FILE_COPIES = COMMON_FILE_COPIES + [
-    ("render-batch.json", "render-batch.json"),
-    ("render-single.json", "render-single.json"),
-    (".claude-plugin/syncsign-swagger.json", "syncsign-swagger.json"),
+REFERENCE_FILE_COPIES = [
+    ("references/display-render-layout-knowledge.md", "references/display-render-layout-knowledge.md"),
 ]
+
+EXAMPLE_FILE_COPIES = [
+    ("examples/render-batch.json", "examples/render-batch.json"),
+    ("examples/render-single.json", "examples/render-single.json"),
+]
+
+RUNTIME_FILE_COPIES = COMMON_FILE_COPIES + [
+    (".claude-plugin/syncsign-swagger.json", "syncsign-swagger.json"),
+] + REFERENCE_FILE_COPIES + EXAMPLE_FILE_COPIES
 
 CLAUDE_FILE_COPIES = COMMON_FILE_COPIES + [
     (".claude-plugin/syncsign-swagger.json", "syncsign-swagger.json"),
-]
+    (
+        "references/display-render-layout-knowledge.md",
+        "skills/syncsign-api/references/display-render-layout-knowledge.md",
+    ),
+] + EXAMPLE_FILE_COPIES
 
 RUNTIME_REQUIRED_OUTPUTS = [
     "SKILL.md",
@@ -87,12 +108,13 @@ RUNTIME_REQUIRED_OUTPUTS = [
     "env.example",
     "AGENTS.md",
     "GEMINI.md",
+    "references/display-render-layout-knowledge.md",
     "common/syncsign_auth.py",
     "common/syncsign_client.py",
     "scripts/syncsign_get_user_info.py",
     "scripts/syncsign_list_devices.py",
-    "render-batch.json",
-    "render-single.json",
+    "examples/render-batch.json",
+    "examples/render-single.json",
     "syncsign-swagger.json",
 ]
 
@@ -103,10 +125,13 @@ CLAUDE_REQUIRED_OUTPUTS = [
     "env.example",
     "AGENTS.md",
     "GEMINI.md",
+    "skills/syncsign-api/references/display-render-layout-knowledge.md",
     "common/syncsign_auth.py",
     "common/syncsign_client.py",
     "scripts/syncsign_get_user_info.py",
     "scripts/syncsign_list_devices.py",
+    "examples/render-batch.json",
+    "examples/render-single.json",
     "syncsign-swagger.json",
     "README.generated.md",
 ]
@@ -212,4 +237,7 @@ if __name__ == "__main__":
     build_release_artifacts()
     print(f"Generated npx runtime package at {RUNTIME_ROOT}")
     print(f"Generated Claude plugin package at {CLAUDE_ROOT}")
+
+
+
 
