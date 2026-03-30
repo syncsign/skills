@@ -23,7 +23,7 @@ Claude uses the generated package at `plugins/syncsign-api`.
 **Option 2 - npx (skills.sh)**
 
 ```bash
-npx skills add <owner>/<repo@syncsign-api>
+npx skills add syncsign/skills@syncsign-api
 ```
 
 For repo-based `skills.sh` installs, the repository should expose the `syncsign-api` skill entry. The generated runtime artifact intended for `npx` distribution lives at `packages/npx/syncsign-api`.
@@ -65,7 +65,7 @@ Create or edit the `.env` file in the current Skill runtime root with:
 SYNCSIGN_API_KEY=your_syncsign_api_key
 ```
 
-If `.env` does not exist yet, create it or copy `env.example` to `.env` first.
+If `.env` does not exist yet, create it or copy `.env.example` to `.env` first.
 
 `SYNCSIGN_API_BASE_URL` is optional. Most users should leave it unset and use the built-in default API endpoint.
 

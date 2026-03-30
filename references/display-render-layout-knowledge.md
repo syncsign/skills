@@ -323,6 +323,62 @@ Heuristics that work well:
 - Dashboard or KPI card layout: outer `RECTANGLE` cards plus large-font `TEXT`.
 - Calendar template: two blocks, `BUSY` and `FREE`, with the same visual skeleton but different reserved IDs.
 
+
+## 6A. Client-Editable Template Fields
+
+For reusable templates pushed from the SyncSign client, a `TEXT` item can expose an input box in `Draw on Screen` when `data.property` is present.
+
+Example shape:
+
+```json
+{
+  "type": "TEXT",
+  "data": {
+    "text": "",
+    "id": "LEFT_CELL",
+    "font": "DDIN_CONDENSED_24",
+    "textAlign": "CENTER",
+    "block": { "x": 96, "y": 92, "w": 288, "h": 24 },
+    "property": {
+      "caption": "Left Cell",
+      "control": "TEXTAREA",
+      "minLength": 0,
+      "maxLength": 64,
+      "regex": "*"
+    }
+  }
+}
+```
+
+What this means in practice:
+- `property.caption` becomes the title shown above the input box in the SyncSign client.
+- `property.control` determines the editor type. `TEXTAREA` is appropriate for general text entry.
+- `minLength`, `maxLength`, and `regex` constrain what the user can enter in the client.
+
+Important binding rule learned from this project:
+- Do not reuse the same `property.caption` across multiple editable fields that should hold different values.
+- If multiple fields share the same caption, the client may treat them as one input and the last entered value can overwrite all of them.
+
+Therefore:
+- `id` should remain unique for the rendered item.
+- `property.caption` should also be unique for each separately editable field.
+
+Good examples:
+- `Room Number`
+- `Training Date Start`
+- `Training Date End`
+- `Trainee 1 Left`
+- `Trainee 1 Right`
+- `Training ID Line 1`
+- `Instructor 2`
+
+Use this pattern when the user wants:
+- a table or card layout that is fixed structurally but editable in the SyncSign client
+- a reusable template that non-technical users can fill before pushing to a Display
+- client-side data entry without changing the JSON structure every time
+
+See also:
+- `examples/template-editable-table.json`
 ## 7. Ready-to-Adapt 4x4 Table Example
 
 The example below targets a `4.2` inch Display (`400x300` canvas). It draws a 4x4 table using `RECTANGLE` dividers plus one centered `TEXT` item per cell.
@@ -590,4 +646,5 @@ When the user says:
 - "Put a QR code on the lower right": use `QRCODE` with explicit `position`, `scale`, and `version`.
 - "Show an uploaded logo": use `IMAGE`.
 - "Show a remote bitmap": use `BITMAP_URI`.
+
 

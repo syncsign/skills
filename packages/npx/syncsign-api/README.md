@@ -10,7 +10,7 @@ python scripts/build_release_artifacts.py
 
 ## First-Time Setup
 
-1. Create `.env` in this directory, or copy `env.example` to `.env`.
+1. Create `.env` in this directory, or copy `.env.example` to `.env`.
 2. Add your SyncSign API key:
 
 ```env

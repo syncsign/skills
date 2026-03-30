@@ -96,7 +96,7 @@ runtime-root/
 |- SKILL.md
 |- README.md
 |- requirements.txt
-|- env.example
+|- .env.example
 |- examples/
 |  |- render-batch.json
 |  \- render-single.json
@@ -118,7 +118,7 @@ runtime-root/
 |  |- render-batch.json
 |  \- render-single.json
 |- requirements.txt
-|- env.example
+|- .env.example
 |- syncsign-swagger.json
 |- scripts/
 |  \- syncsign_*.py
@@ -187,12 +187,14 @@ If the official Hub SDK examples show different dimensions for `7.5 Inch`, prefe
 Example request bodies are stored under `examples/`:
 - `examples/render-single.json`: sample body for `syncsign_post_node_render.py` when rendering to one Display.
 - `examples/render-batch.json`: sample body for `syncsign_post_nodes_render.py` when rendering the same or different layouts to multiple Displays.
+- `examples/template-editable-table.json`: sample reusable template showing how `TEXT.data.property.caption` creates client-side input fields for custom table content.
 
 Use that reference when the user asks for:
 - custom `layout` JSON authoring
 - tables, dashboards, cards, or mixed text-and-shape compositions
 - calendar template customization with `BUSY` / `FREE` blocks
 - calendar placeholder IDs such as `ONGOING_EVENT_SUMMARY` or `UPCOMING_1_TIME`
+- SyncSign client editable templates where users should fill table cells or other text fields before pushing content to a Display
 
 That knowledge base summarizes the official SyncSign rendering and calendar template docs and includes a ready-to-adapt `4x4` table example.
 
@@ -322,4 +324,6 @@ Tell the user they can check the real current Display signal like this:
 2. Open the Display configuration page in the `SyncSignr` app.
 3. Check whether `Last Seen` updates to the current time.
 4. If `Last Seen` updates to the current time, the displayed signal level is the real current signal level at that position.
+
+
 

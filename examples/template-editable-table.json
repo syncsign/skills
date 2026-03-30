@@ -1,0 +1,163 @@
+[
+  {
+    "version": "7",
+    "layout": [
+      {
+        "status": "ANY",
+        "preImg": "",
+        "background": {
+          "bgColor": "WHITE",
+          "enableButtonZone": false
+        },
+        "items": [
+          {
+            "type": "TEXT",
+            "data": {
+              "text": "Editable Table Example",
+              "id": "TITLE",
+              "font": "YANONE_KAFFEESATZ_24_B",
+              "textColor": "BLACK",
+              "backgroundColor": "WHITE",
+              "textAlign": "CENTER",
+              "block": {
+                "x": 0,
+                "y": 8,
+                "w": 800,
+                "h": 24
+              }
+            }
+          },
+          {
+            "type": "LINE",
+            "data": {
+              "backgroundColor": "WHITE",
+              "lineColor": "BLACK",
+              "linePattern": "SOLID",
+              "transparentColor": "OPAQUE",
+              "block": {
+                "x0": 80,
+                "y0": 72,
+                "x1": 720,
+                "y1": 72
+              }
+            }
+          },
+          {
+            "type": "LINE",
+            "data": {
+              "backgroundColor": "WHITE",
+              "lineColor": "BLACK",
+              "linePattern": "SOLID",
+              "transparentColor": "OPAQUE",
+              "block": {
+                "x0": 80,
+                "y0": 144,
+                "x1": 720,
+                "y1": 144
+              }
+            }
+          },
+          {
+            "type": "LINE",
+            "data": {
+              "backgroundColor": "WHITE",
+              "lineColor": "BLACK",
+              "linePattern": "SOLID",
+              "transparentColor": "OPAQUE",
+              "block": {
+                "x0": 80,
+                "y0": 72,
+                "x1": 80,
+                "y1": 144
+              }
+            }
+          },
+          {
+            "type": "LINE",
+            "data": {
+              "backgroundColor": "WHITE",
+              "lineColor": "BLACK",
+              "linePattern": "SOLID",
+              "transparentColor": "OPAQUE",
+              "block": {
+                "x0": 720,
+                "y0": 72,
+                "x1": 720,
+                "y1": 144
+              }
+            }
+          },
+          {
+            "type": "LINE",
+            "data": {
+              "backgroundColor": "WHITE",
+              "lineColor": "BLACK",
+              "linePattern": "SOLID",
+              "transparentColor": "OPAQUE",
+              "block": {
+                "x0": 400,
+                "y0": 72,
+                "x1": 400,
+                "y1": 144
+              }
+            }
+          },
+          {
+            "type": "TEXT",
+            "data": {
+              "text": "",
+              "id": "LEFT_CELL",
+              "font": "DDIN_CONDENSED_24",
+              "textColor": "BLACK",
+              "backgroundColor": "WHITE",
+              "textAlign": "CENTER",
+              "block": {
+                "x": 96,
+                "y": 92,
+                "w": 288,
+                "h": 24
+              },
+              "property": {
+                "caption": "Left Cell",
+                "control": "TEXTAREA",
+                "minLength": 0,
+                "maxLength": 64,
+                "regex": "*"
+              }
+            }
+          },
+          {
+            "type": "TEXT",
+            "data": {
+              "text": "",
+              "id": "RIGHT_CELL",
+              "font": "DDIN_CONDENSED_24",
+              "textColor": "BLACK",
+              "backgroundColor": "WHITE",
+              "textAlign": "CENTER",
+              "block": {
+                "x": 416,
+                "y": 92,
+                "w": 288,
+                "h": 24
+              },
+              "property": {
+                "caption": "Right Cell",
+                "control": "TEXTAREA",
+                "minLength": 0,
+                "maxLength": 64,
+                "regex": "*"
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "displayType": "7IN5_BWC",
+    "dataSource": "GENERAL",
+    "description": "Editable table example with unique captions",
+    "id": "adf0c77a-3fdb-48b9-bd2a-2d52cdedb901",
+    "name": "Editable Table Example",
+    "ownerId": "SYNC_DISPLAY"
+  }
+]

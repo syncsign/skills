@@ -41,7 +41,7 @@ python scripts/build_release_artifacts.py
 
 ## First-Time Setup
 
-1. Create `.env` in this directory, or copy `env.example` to `.env`.
+1. Create `.env` in this directory, or copy `.env.example` to `.env`.
 2. Add your SyncSign API key:
 
 ```env
@@ -75,7 +75,7 @@ Custom layout guidance is bundled under:
 COMMON_FILE_COPIES = [
     ("requirements.txt", "requirements.txt"),
     ("LICENSE", "LICENSE"),
-    ("env.example", "env.example"),
+    (".env.example", ".env.example"),
     ("AGENTS.md", "AGENTS.md"),
     ("GEMINI.md", "GEMINI.md"),
 ]
@@ -87,6 +87,7 @@ REFERENCE_FILE_COPIES = [
 EXAMPLE_FILE_COPIES = [
     ("examples/render-batch.json", "examples/render-batch.json"),
     ("examples/render-single.json", "examples/render-single.json"),
+    ("examples/template-editable-table.json", "examples/template-editable-table.json"),
 ]
 
 RUNTIME_FILE_COPIES = COMMON_FILE_COPIES + [
@@ -105,7 +106,7 @@ RUNTIME_REQUIRED_OUTPUTS = [
     "SKILL.md",
     "README.md",
     "requirements.txt",
-    "env.example",
+    ".env.example",
     "AGENTS.md",
     "GEMINI.md",
     "references/display-render-layout-knowledge.md",
@@ -115,6 +116,7 @@ RUNTIME_REQUIRED_OUTPUTS = [
     "scripts/syncsign_list_devices.py",
     "examples/render-batch.json",
     "examples/render-single.json",
+    "examples/template-editable-table.json",
     "syncsign-swagger.json",
 ]
 
@@ -122,12 +124,13 @@ CLAUDE_REQUIRED_OUTPUTS = [
     ".claude-plugin/plugin.json",
     "skills/syncsign-api/SKILL.md",
     "requirements.txt",
-    "env.example",
+    ".env.example",
     "AGENTS.md",
     "GEMINI.md",
     "skills/syncsign-api/references/display-render-layout-knowledge.md",
     "common/syncsign_auth.py",
     "common/syncsign_client.py",
+    "examples/template-editable-table.json",
     "scripts/syncsign_get_user_info.py",
     "scripts/syncsign_list_devices.py",
     "examples/render-batch.json",
@@ -237,6 +240,8 @@ if __name__ == "__main__":
     build_release_artifacts()
     print(f"Generated npx runtime package at {RUNTIME_ROOT}")
     print(f"Generated Claude plugin package at {CLAUDE_ROOT}")
+
+
 
 
 
