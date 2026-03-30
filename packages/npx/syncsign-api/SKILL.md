@@ -38,6 +38,7 @@ Do not claim unsupported capabilities. Do not promise diagnosis beyond the field
 6. If any SyncSign script exits with code `2` or stderr contains `SYNCSIGN_API_KEY_MISSING`, stop immediately.
 7. After `SYNCSIGN_API_KEY_MISSING`, do not run any more diagnostic commands. Do not inspect `.env`. Do not continue exploring. Respond with the fixed setup message and end the turn.
 8. Unless the user or maintainer explicitly asks, do not add extra docs, code, scripts, sample files, or other repository artifacts just to satisfy a one-off operational request. Prefer direct execution or inline JSON instead.
+9. Never hallucinate. Answer only from explicit knowledge sources available to this skill, such as API responses, bundled references, or official documentation already loaded for the task. If the needed fact is not supported by a clear source, say so explicitly instead of guessing.
 
 Forbidden examples after `SYNCSIGN_API_KEY_MISSING`:
 - `Get-Content .env`
@@ -170,7 +171,11 @@ source-root/
    - Make sure the target node or nodes are unambiguous
    - Use the user's requested layout exactly
    - Prefer `--body-file` for larger JSON payloads
-   - After a render request, use `syncsign_get_render.py` when the user asks for final execution status or when you need to confirm delivery
+   - If the render `POST` returns HTTP `200` and a `renderId` or requested ID, treat the render submission itself as completed
+   - Do not perform delayed rechecks, polling, or wait-for-completion loops after a successful render submission by default
+   - Hub pickup and final `isRendered: true` timing depend on downstream device and network conditions, so do not block on that state unless the user explicitly asks
+   - Use `syncsign_get_render.py` only when the user explicitly asks for final execution status, or when troubleshooting a suspected render failure after submission
+   - After a successful render submission, report the returned `renderId` or requested ID and stop unless the user asks for more
 4. The public routes in this skill authenticate only with the SyncSign API key saved in `.env`.
 
 ## Custom Rendering Reference
@@ -192,11 +197,27 @@ Example request bodies are stored under `examples/`:
 Use that reference when the user asks for:
 - custom `layout` JSON authoring
 - tables, dashboards, cards, or mixed text-and-shape compositions
+- custom image placement, organization logo usage, `BITMAP_URI`, or black/red layered bitmap rendering
 - calendar template customization with `BUSY` / `FREE` blocks
 - calendar placeholder IDs such as `ONGOING_EVENT_SUMMARY` or `UPCOMING_1_TIME`
 - SyncSign client editable templates where users should fill table cells or other text fields before pushing content to a Display
 
 That knowledge base summarizes the official SyncSign rendering and calendar template docs and includes a ready-to-adapt `4x4` table example.
+
+## Product and FAQ Reference
+
+For product overview, calendar-source selection, cloud vs SOPS guidance, firewall requirements, and common FAQ answers, read `references/user-manual-product-and-faq-knowledge.md`.
+
+Use that reference when the user asks for:
+- product introduction or system architecture
+- whether they should use SyncSign Cloud or SOPS
+- which calendar data source fits their environment
+- firewall, port, domain, or network-access requirements
+- product usage FAQ answers already covered by the official user manual
+- calendar data source FAQ issues such as Office 365 access, missing room calendars, or organizer-name title behavior
+- technical-specification or feature questions already covered by the manual
+
+When the FAQ or manual clearly answers the user's question, answer directly from that reference before inventing a custom diagnosis.
 
 ## Scripts
 
@@ -324,6 +345,4 @@ Tell the user they can check the real current Display signal like this:
 2. Open the Display configuration page in the `SyncSignr` app.
 3. Check whether `Last Seen` updates to the current time.
 4. If `Last Seen` updates to the current time, the displayed signal level is the real current signal level at that position.
-
-
 

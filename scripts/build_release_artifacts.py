@@ -4,7 +4,8 @@ from pathlib import Path
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-RUNTIME_ROOT = REPO_ROOT / "packages" / "npx" / "syncsign-api"
+NPX_ROOT = REPO_ROOT / "packages" / "npx"
+RUNTIME_ROOT = NPX_ROOT / "syncsign-api"
 CLAUDE_ROOT = REPO_ROOT / "plugins" / "syncsign-api"
 IGNORE_PATTERNS = shutil.ignore_patterns("__pycache__", "*.pyc", "*.pyo")
 ACTION_SCRIPT_GLOB = "syncsign_*.py"
@@ -50,11 +51,15 @@ SYNCSIGN_API_KEY=your_syncsign_api_key
 
 3. Save the file, then rerun your request.
 
-## Custom Rendering Reference
+## Knowledge References
 
 For custom layout and calendar-template authoring, see:
 
 `references/display-render-layout-knowledge.md`
+
+For product overview, cloud vs SOPS, calendar-source, firewall, and FAQ guidance, see:
+
+`references/user-manual-product-and-faq-knowledge.md`
 """
 
 CLAUDE_NOTICE = """# Generated Package
@@ -67,9 +72,10 @@ Do not edit files in this directory directly. Update the canonical source files 
 python scripts/build_release_artifacts.py
 ```
 
-Custom layout guidance is bundled under:
+Knowledge references are bundled under:
 
 `skills/syncsign-api/references/display-render-layout-knowledge.md`
+`skills/syncsign-api/references/user-manual-product-and-faq-knowledge.md`
 """
 
 COMMON_FILE_COPIES = [
@@ -82,6 +88,10 @@ COMMON_FILE_COPIES = [
 
 REFERENCE_FILE_COPIES = [
     ("references/display-render-layout-knowledge.md", "references/display-render-layout-knowledge.md"),
+    (
+        "references/user-manual-product-and-faq-knowledge.md",
+        "references/user-manual-product-and-faq-knowledge.md",
+    ),
 ]
 
 EXAMPLE_FILE_COPIES = [
@@ -100,6 +110,10 @@ CLAUDE_FILE_COPIES = COMMON_FILE_COPIES + [
         "references/display-render-layout-knowledge.md",
         "skills/syncsign-api/references/display-render-layout-knowledge.md",
     ),
+    (
+        "references/user-manual-product-and-faq-knowledge.md",
+        "skills/syncsign-api/references/user-manual-product-and-faq-knowledge.md",
+    ),
 ] + EXAMPLE_FILE_COPIES
 
 RUNTIME_REQUIRED_OUTPUTS = [
@@ -110,6 +124,7 @@ RUNTIME_REQUIRED_OUTPUTS = [
     "AGENTS.md",
     "GEMINI.md",
     "references/display-render-layout-knowledge.md",
+    "references/user-manual-product-and-faq-knowledge.md",
     "common/syncsign_auth.py",
     "common/syncsign_client.py",
     "scripts/syncsign_get_user_info.py",
@@ -120,6 +135,11 @@ RUNTIME_REQUIRED_OUTPUTS = [
     "syncsign-swagger.json",
 ]
 
+NPX_REQUIRED_OUTPUTS = [
+    ".env.example",
+    "syncsign-api/.env.example",
+]
+
 CLAUDE_REQUIRED_OUTPUTS = [
     ".claude-plugin/plugin.json",
     "skills/syncsign-api/SKILL.md",
@@ -128,6 +148,7 @@ CLAUDE_REQUIRED_OUTPUTS = [
     "AGENTS.md",
     "GEMINI.md",
     "skills/syncsign-api/references/display-render-layout-knowledge.md",
+    "skills/syncsign-api/references/user-manual-product-and-faq-knowledge.md",
     "common/syncsign_auth.py",
     "common/syncsign_client.py",
     "examples/template-editable-table.json",
@@ -179,14 +200,18 @@ def write_text(path, content):
 
 
 def write_runtime_package():
+    NPX_ROOT.mkdir(parents=True, exist_ok=True)
     reset_dir(RUNTIME_ROOT)
     copy_common_dir(RUNTIME_ROOT)
     copy_action_scripts(RUNTIME_ROOT)
     for src_rel, dst_rel in RUNTIME_FILE_COPIES:
         copy_file(src_rel, RUNTIME_ROOT, dst_rel)
+    # skills.sh appears to package from packages/npx, so mirror the setup template there too.
+    copy_file(".env.example", NPX_ROOT, ".env.example")
     copy_file("SKILL.md", RUNTIME_ROOT, "SKILL.md")
     write_text(RUNTIME_ROOT / "README.md", RUNTIME_README)
     validate_package(RUNTIME_ROOT, RUNTIME_REQUIRED_OUTPUTS)
+    validate_package(NPX_ROOT, NPX_REQUIRED_OUTPUTS)
 
 
 def write_plugin_manifest():
@@ -240,9 +265,3 @@ if __name__ == "__main__":
     build_release_artifacts()
     print(f"Generated npx runtime package at {RUNTIME_ROOT}")
     print(f"Generated Claude plugin package at {CLAUDE_ROOT}")
-
-
-
-
-
-

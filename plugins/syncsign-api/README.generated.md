@@ -8,6 +8,7 @@ Do not edit files in this directory directly. Update the canonical source files 
 python scripts/build_release_artifacts.py
 ```
 
-Custom layout guidance is bundled under:
+Knowledge references are bundled under:
 
 `skills/syncsign-api/references/display-render-layout-knowledge.md`
+`skills/syncsign-api/references/user-manual-product-and-faq-knowledge.md`

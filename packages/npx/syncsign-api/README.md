@@ -19,8 +19,12 @@ SYNCSIGN_API_KEY=your_syncsign_api_key
 
 3. Save the file, then rerun your request.
 
-## Custom Rendering Reference
+## Knowledge References
 
 For custom layout and calendar-template authoring, see:
 
 `references/display-render-layout-knowledge.md`
+
+For product overview, cloud vs SOPS, calendar-source, firewall, and FAQ guidance, see:
+
+`references/user-manual-product-and-faq-knowledge.md`

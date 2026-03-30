@@ -90,7 +90,7 @@ This skill currently supports:
 - Render submission to one Display or multiple Displays.
 - Render status lookup by render ID.
 
-## Rendering Knowledge Base
+## Knowledge Bases
 
 Custom Display rendering guidance now lives in `references/display-render-layout-knowledge.md`.
 
@@ -101,6 +101,15 @@ That reference summarizes:
 - generation rules for custom layouts such as `4x4` tables
 
 Use it when the user asks for custom Display composition rather than a simple text-only render.
+
+Product, deployment, calendar-source, firewall, and FAQ guidance now lives in `references/user-manual-product-and-faq-knowledge.md`.
+
+That reference summarizes:
+- product architecture and deployment model basics
+- cloud vs SOPS guidance
+- calendar data source selection and common Office 365 issues
+- firewall / domain / port requirements from the user manual
+- FAQ answers for product usage and technical features
 
 ## Included Public API Endpoints
 
@@ -140,4 +149,5 @@ Each route is implemented as an atomic Python script under `scripts/` in the can
 ## Privacy
 
 Credentials are stored only in the `.env` file in the current Skill runtime root, which is git-ignored. This public skill persists the API key and an optional base URL override only.
+
 
