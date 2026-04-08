@@ -12,7 +12,9 @@ from common.syncsign_client import SyncSignApiError, SyncSignTransportError, pri
 
 
 def main():
-    parser = argparse.ArgumentParser(description="List all SyncSign nodes associated with a hub.")
+    parser = argparse.ArgumentParser(
+        description="List SyncSign nodes for the /devices/{sn}/nodes route using a Display virtual Hub SN."
+    )
     parser.add_argument("--sn", required=True)
     parser.add_argument("--timeout", type=float, default=30.0)
     args = parser.parse_args()

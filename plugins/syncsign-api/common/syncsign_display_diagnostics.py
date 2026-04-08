@@ -57,6 +57,26 @@ def extract_online_status(data):
     return None
 
 
+def extract_hub_sn(node):
+    if not isinstance(node, dict):
+        return None
+
+    message_agents = node.get("messageAgents")
+    if not isinstance(message_agents, list):
+        return None
+
+    for agent in message_agents:
+        if not isinstance(agent, dict):
+            continue
+        if agent.get("type") != "HUB_PAN":
+            continue
+        hub_sn = ((agent.get("data") or {}).get("sn"))
+        if hub_sn:
+            return hub_sn
+
+    return None
+
+
 def support_actions():
     return [
         f"There is not enough information from the API to continue this diagnosis. Please contact SyncSign Support at {SUPPORT_URL} or {SUPPORT_EMAIL}."
@@ -176,7 +196,7 @@ def build_offline_actions(model, battery_level, signal_level, hub_online):
 def diagnose_display_sync(node, now_ms, hub_detail=None):
     model = node.get("model")
     display_online = extract_online_status(node)
-    hub_sn = node.get("thingName")
+    hub_sn = extract_hub_sn(node)
     hub_online = extract_online_status(hub_detail)
     battery_level = parse_int(node.get("batteryLevel"))
     signal_level = parse_int(node.get("signalLevel"))
@@ -240,4 +260,3 @@ def diagnose_display_sync(node, now_ms, hub_detail=None):
         "This result is based only on the API fields that were returned. If sync refresh still fails, this workflow did not find a calendar binding or subscription issue."
     )
     return diagnosis
-

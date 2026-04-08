@@ -10,7 +10,7 @@ if str(ROOT_DIR) not in sys.path:
 
 from common.syncsign_auth import load_saved_credentials_or_exit
 from common.syncsign_client import SyncSignApiError, SyncSignTransportError, print_json, request_api
-from common.syncsign_display_diagnostics import diagnose_display_sync
+from common.syncsign_display_diagnostics import diagnose_display_sync, extract_hub_sn
 
 
 def unwrap_response(payload):
@@ -72,7 +72,7 @@ def main():
 
     try:
         node = fetch_node(creds, node_id=args.node_id, sn=args.sn, timeout=args.timeout)
-        hub_detail = fetch_hub_detail(creds, hub_sn=node.get("thingName"), timeout=args.timeout)
+        hub_detail = fetch_hub_detail(creds, hub_sn=extract_hub_sn(node), timeout=args.timeout)
     except (SyncSignApiError, SyncSignTransportError) as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         sys.exit(1)
@@ -88,4 +88,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

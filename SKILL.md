@@ -9,6 +9,34 @@ tools: [ "run_shell_command" ]
 
 Use this skill whenever the user is asking about SyncSign account info, Hubs, Displays, nodes, render jobs, or screen rendering through the public SyncSign Web API.
 
+## Install and Setup
+
+For `skills.sh`, install this skill with:
+
+```bash
+npx skills add https://github.com/syncsign/skills --skill syncsign-api
+```
+
+After installation, configure the API key in the current Skill runtime root:
+
+1. Create `.env` in the runtime root, or copy `.env.example` to `.env`.
+2. Add your SyncSign API key:
+
+```env
+SYNCSIGN_API_KEY=your_syncsign_api_key
+```
+
+3. Save the file, then rerun your request.
+
+If you do not have an API key yet:
+
+1. Open the SyncSign client.
+2. Go to `Settings`.
+3. Copy your API Key.
+4. Paste it into the `.env` file in the current Skill runtime root.
+
+`SYNCSIGN_API_BASE_URL` is optional. Most users should leave it unset and use the default public endpoint.
+
 ## What This Skill Can Do
 
 If the user asks what this skill can do, answer from the capability list below.
@@ -18,7 +46,7 @@ This skill can:
 - List Hubs and other devices under the saved API key.
 - List Displays globally or under a specific Hub.
 - Get detailed Hub information by serial number.
-- Get detailed Display information by node ID, or by Hub serial number plus node ID.
+- Get detailed Display information by node ID, or by Display virtual Hub SN plus node ID for the two `/devices/{sn}/nodes*` routes only.
 - Diagnose supported calendar Display sync issues for models `D75C-LEWI`, `D42C-LE`, and `D29C-LE` using live API data.
 - Check whether a supported Display has a calendar bound.
 - Check whether a supported Display calendar subscription is healthy by verifying `watchResourceId` and `watchExpiration`.
@@ -48,7 +76,7 @@ Forbidden examples after `SYNCSIGN_API_KEY_MISSING`:
 - searching for `SYNCSIGN_API_KEY`
 - reading generated packages to hunt for credentials
 
-## First-Time Setup
+## API Key Missing Handling
 
 Do not proactively read or inspect the `.env` file. Credentials are checked automatically when the atomic scripts run. If any SyncSign script exits with code `2` and stderr contains `SYNCSIGN_API_KEY_MISSING`, output the following message verbatim, then stop and wait for the user to confirm setup is complete before taking any further action.
 
@@ -164,7 +192,8 @@ source-root/
 1. Prefer the existing atomic scripts in `scripts/`. Do not replace them with ad hoc `curl` or one-off Python snippets unless you are patching the project itself.
 2. Resolve identifiers before detail calls:
    - If `sn` is unknown, start with `syncsign_list_devices.py`
-   - If `node_id` is unknown for a hub, start with `syncsign_list_device_nodes.py`
+   - If `node_id` is unknown for the /devices/{sn}/nodes* routes, start with `syncsign_list_device_nodes.py`
+   - For those two routes only, sn means the Display virtual Hub SN, not the physical Hub SN
    - If `node_id` is unknown globally, start with `syncsign_list_nodes.py`
    - If `render_id` is unknown, only fetch it from the response of a prior render call
 3. Treat render operations as side-effecting:
@@ -202,6 +231,10 @@ Use that reference when the user asks for:
 - calendar placeholder IDs such as `ONGOING_EVENT_SUMMARY` or `UPCOMING_1_TIME`
 - SyncSign client editable templates where users should fill table cells or other text fields before pushing content to a Display
 
+When the user asks to generate or make a user-defined custom template, output only the `layout` structure with nested `items`.
+Do not include template-root metadata fields.
+For custom calendar templates, include both `status: "BUSY"` and `status: "FREE"` blocks under `layout`, and each block must contain its own `items` array.
+
 That knowledge base summarizes the official SyncSign rendering and calendar template docs and includes a ready-to-adapt `4x4` table example.
 
 ## Product and FAQ Reference
@@ -231,6 +264,7 @@ When the FAQ or manual clearly answers the user's question, answer directly from
 ### Displays / Nodes
 - `python scripts/syncsign_list_device_nodes.py --sn <SN>`
 - `python scripts/syncsign_get_device_node.py --sn <SN> --node_id <NODE_ID>`
+- For those two routes only, pass the Display virtual Hub SN as `SN`, not the physical Hub SN.
 - `python scripts/syncsign_list_nodes.py`
 - `python scripts/syncsign_get_node.py --node_id <NODE_ID>`
 - `python scripts/syncsign_diagnose_display_sync.py --node_id <NODE_ID>`
@@ -256,6 +290,8 @@ Covered routes:
 - `POST /key/{api_key}/nodes/{node_id}/renders`
 - `POST /key/{api_key}/renders`
 - `GET /key/{api_key}/renders/{render_id}`
+
+For `GET /key/{api_key}/devices/{sn}/nodes` and `GET /key/{api_key}/devices/{sn}/nodes/{node_id}` only, `sn` means the Display virtual Hub SN, not the physical Hub SN.
 ## Display Sync Troubleshooting
 
 Use this workflow when the user says a Display is not syncing or refreshing correctly.
@@ -345,4 +381,3 @@ Tell the user they can check the real current Display signal like this:
 2. Open the Display configuration page in the `SyncSignr` app.
 3. Check whether `Last Seen` updates to the current time.
 4. If `Last Seen` updates to the current time, the displayed signal level is the real current signal level at that position.
-

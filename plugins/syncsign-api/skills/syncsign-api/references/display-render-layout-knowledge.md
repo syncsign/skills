@@ -58,6 +58,11 @@ This is the shape used by `examples/render-single.json`, `examples/render-batch.
 }
 ```
 
+Output rule for this project:
+- When generating a user-defined custom template, return only the `layout` structure with nested `items`.
+- Do not include template-root metadata fields.
+- For custom calendar templates, include both `status: "BUSY"` and `status: "FREE"` blocks under `layout`.
+
 The calendar template format is not a direct one-shot render. It is a template set. SyncSign chooses the matching block by `status`, then replaces some `TEXT` values according to the special `id` fields documented below.
 
 ## 2. Coordinate System and Screen Sizes
@@ -887,9 +892,27 @@ When the user says:
 - "Show an uploaded logo": use `IMAGE`.
 - "Show a remote bitmap": use `BITMAP_URI`.
 
+## 10. Cross-Size Template Rules
 
+This repository should treat custom template structure as cross-size by default.
 
+Stable rule:
+- Do not create a separate custom template style just because the target Display size changes.
+- The template schema is effectively the same across supported Display sizes.
+- The stable differences are the size-adapted coordinates or block dimensions.
 
+Practical authoring rule:
+- Reuse the same logical template structure across sizes whenever possible.
+- Only adjust item coordinates, widths, heights, and font sizing to fit the target canvas.
+- Do not add template-root metadata fields when generating user-facing custom template JSON.
 
+### Cross-size image guidance
 
+When a template uses `BITMAP_URI`, the same authoring rule applies across sizes:
+- keep the same item type and field structure
+- scale the target `block` to the target Display canvas
+- prefer `http` BMP URLs when possible because some `https` URLs may fail without the needed root certificates on the Hub or Display
+- remember that `BITMAP_URI` content is cached, so changing the filename or appending a query string such as `?v=2` is the practical cache-busting approach
 
+Operational note from the official docs:
+- For `2.9` inch and `4.2` inch Displays without built-in Wi-Fi, the Hub downloads the image and forwards it over ZigBee, which can take about `3` to `5` minutes.

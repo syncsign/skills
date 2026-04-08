@@ -102,6 +102,14 @@ That reference summarizes:
 
 Use it when the user asks for custom Display composition rather than a simple text-only render.
 
+Included render examples:
+- `examples/render-single.json` for the minimal single-node render payload shape
+- `examples/template-editable-table.json` for a reusable client-editable template example
+
+For user-defined custom templates, return only the `layout` structure with nested `items`.
+Do not include template-root metadata fields.
+For custom calendar templates, include both `status: "BUSY"` and `status: "FREE"` blocks under `layout`.
+
 Product, deployment, calendar-source, firewall, and FAQ guidance now lives in `references/user-manual-product-and-faq-knowledge.md`.
 
 That reference summarizes:
@@ -122,6 +130,9 @@ This project currently covers every route published in the SyncSign public Swagg
 - `GET /key/{api_key}/devices/{sn}/nodes/{node_id}`
 - `GET /key/{api_key}/nodes`
 - `GET /key/{api_key}/nodes/{node_id}`
+
+For `GET /key/{api_key}/devices/{sn}/nodes` and `GET /key/{api_key}/devices/{sn}/nodes/{node_id}` only, `sn` means the Display virtual Hub SN, not the physical Hub SN.
+
 - `POST /key/{api_key}/nodes/{node_id}/renders`
 - `POST /key/{api_key}/renders`
 - `GET /key/{api_key}/renders/{render_id}`
@@ -149,5 +160,3 @@ Each route is implemented as an atomic Python script under `scripts/` in the can
 ## Privacy
 
 Credentials are stored only in the `.env` file in the current Skill runtime root, which is git-ignored. This public skill persists the API key and an optional base URL override only.
-
-

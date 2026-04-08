@@ -1,14 +1,7 @@
 [
   {
-    "version": "7",
     "layout": [
       {
-        "status": "ANY",
-        "preImg": "",
-        "background": {
-          "bgColor": "WHITE",
-          "enableButtonZone": false
-        },
         "items": [
           {
             "type": "TEXT",
@@ -152,12 +145,6 @@
           }
         ]
       }
-    ],
-    "displayType": "7IN5_BWC",
-    "dataSource": "GENERAL",
-    "description": "Editable table example with unique captions",
-    "id": "adf0c77a-3fdb-48b9-bd2a-2d52cdedb901",
-    "name": "Editable Table Example",
-    "ownerId": "SYNC_DISPLAY"
+    ]
   }
 ]

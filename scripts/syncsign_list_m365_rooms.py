@@ -12,11 +12,7 @@ from common.syncsign_client import SyncSignApiError, SyncSignTransportError, pri
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="Get a SyncSign node detail for the /devices/{sn}/nodes/{node_id} route using a Display virtual Hub SN."
-    )
-    parser.add_argument("--sn", required=True)
-    parser.add_argument("--node_id", required=True)
+    parser = argparse.ArgumentParser(description="List Microsoft 365 rooms available to the saved API key.")
     parser.add_argument("--timeout", type=float, default=30.0)
     args = parser.parse_args()
 
@@ -25,10 +21,9 @@ def main():
     try:
         result = request_api(
             "GET",
-            "/key/{api_key}/devices/{sn}/nodes/{node_id}",
+            "/key/{api_key}/calendar_providers/office_365/rooms",
             api_key=creds["api_key"],
             base_url=creds["base_url"],
-            path_params={"sn": args.sn, "node_id": args.node_id},
             timeout=args.timeout,
         )
     except (SyncSignApiError, SyncSignTransportError) as exc:
