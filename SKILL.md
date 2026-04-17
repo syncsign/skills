@@ -234,6 +234,10 @@ Use that reference when the user asks for:
 When the user asks to generate or make a user-defined custom template, output only the `layout` structure with nested `items`.
 Do not include template-root metadata fields.
 For custom calendar templates, include both `status: "BUSY"` and `status: "FREE"` blocks under `layout`, and each block must contain its own `items` array.
+For event-bound calendar `TEXT` items, do not fill `data.text` with realistic sample event content that could be mistaken for live synced data.
+For `ONGOING_*` fields, use explicit placeholder text that matches the binding, such as `%ONGOING_TIME%` or `%ONGOING_EVENT_SUMMARY%`.
+For `UPCOMING_*` fields, leave `data.text` as an empty string rather than filling a variable placeholder.
+For the built-in organization logo, keep using `IMAGE` with `source: "BUILD_IN"` and `name: "logo.bin"`. Do not replace a logo request with `TEXT` pretending to be a logo. Official public docs describe `foregroundColor` and `backgroundColor` most clearly under `BITMAP_URI`, but project guidance must also allow that `IMAGE` may honor image color fields in real usage on supported firmware. Do not claim that recoloring `logo.bin` through template fields is impossible. When users want a recolored built-in logo, keep it as `IMAGE`, prefer project-validated examples, and mention that actual support may vary by Display firmware.
 
 That knowledge base summarizes the official SyncSign rendering and calendar template docs and includes a ready-to-adapt `4x4` table example.
 

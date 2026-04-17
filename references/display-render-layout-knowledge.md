@@ -62,6 +62,9 @@ Output rule for this project:
 - When generating a user-defined custom template, return only the `layout` structure with nested `items`.
 - Do not include template-root metadata fields.
 - For custom calendar templates, include both `status: "BUSY"` and `status: "FREE"` blocks under `layout`.
+- For event-bound calendar `TEXT` items, do not use realistic sample event copy in `data.text` that could be mistaken for live synced data.
+- For `ONGOING_*` fields, use explicit placeholders such as `%ONGOING_TIME%` or `%ONGOING_EVENT_SUMMARY%`.
+- For `UPCOMING_*` fields, leave `data.text` as an empty string rather than filling a variable placeholder.
 
 The calendar template format is not a direct one-shot render. It is a template set. SyncSign chooses the matching block by `status`, then replaces some `TEXT` values according to the special `id` fields documented below.
 
@@ -120,7 +123,7 @@ Common item types:
 | --- | --- | --- |
 | `TEXT` | Render text or icons | `text`, `id`, `font`, `textColor`, `backgroundColor`, `textAlign`, `lineSpace`, `block`, `offset` |
 | `RECTANGLE` | Draw filled or bordered boxes | `fillColor`, `strokeColor`, `strokeThickness`, `block` |
-| `IMAGE` | Place the built-in organization logo image | `source`, `name`, `block` |
+| `IMAGE` | Place the built-in organization logo image | `source`, `name`, `block`, `transparentColor`, and in project-validated usage may also include `foregroundColor` and `backgroundColor` |
 | `BITMAP_URI` | Fetch and render a bitmap by URL; preferred for custom images | `uri`, `foregroundColor`, `backgroundColor`, `block` |
 | `QRCODE` | Draw a QR code | `text`, `position`, `scale`, `version`, `eccLevel` |
 | `LINE` | Draw a line | `lineColor`, `linePattern`, `block.x0`, `y0`, `x1`, `y1` |
@@ -221,6 +224,11 @@ Important fields:
 - `source`: use `BUILD_IN`
 - `name`: file name
 - `block`: position and size
+
+Important note:
+- The public Hub SDK field table documents `transparentColor` for `IMAGE` and documents `foregroundColor` and `backgroundColor` more explicitly for `BITMAP_URI`.
+- In project-validated usage, `IMAGE` and `BITMAP_URI` are both bitmap image render items, and `IMAGE` may also honor `foregroundColor` and `backgroundColor` for recoloring on supported firmware.
+- Do not present `IMAGE` recoloring as impossible. If using `foregroundColor` or `backgroundColor` on `IMAGE`, describe it as project-validated behavior and note that support may vary by Display firmware.
 
 Project-maintained rules:
 - Treat `CUSTOM` as out of scope. It is not a recommended path for this project and should not be proposed to users unless the maintainer explicitly asks for it.
@@ -358,6 +366,9 @@ Hard constraints:
 Project guidance:
 - The source image is the organization's uploaded logo from `SyncSign client -> Settings -> Organization`.
 - The logo asset should be a `96 x 96`, monochrome, `1-bit` `.bmp`.
+- Do not propose a `TEXT` item as a substitute for a requested logo image.
+- When the user wants to recolor the built-in logo, keep it as an `IMAGE` item and allow `foregroundColor` / `backgroundColor` in project-authored examples when that matches real device behavior.
+- Be explicit that this recoloring path is project-validated behavior that may depend on actual Display firmware, because the public field table emphasizes `BITMAP_URI` more clearly than `IMAGE`.
 - If the user wants any non-logo custom image, use `BITMAP_URI` instead.
 
 ### `BITMAP_URI` checklist
@@ -528,6 +539,8 @@ Authoring rules:
 - In calendar templates, `status` is not optional. It determines which visual block SyncSign picks at runtime.
 - Reserved calendar placeholder IDs should be used only on `TEXT` items. They are not general-purpose IDs.
 - If a `TEXT.id` uses a reserved placeholder name, any literal `text` value in that block should be treated as placeholder content that SyncSign will overwrite.
+- To avoid misleading users during template authoring or review, prefer obvious placeholder text for bound calendar fields instead of realistic-looking sample meetings, times, or room names.
+- In this project, use explicit placeholders for `ONGOING_*` fields, but keep `UPCOMING_*` field `text` values empty.
 
 ## 6. Practical Generation Rules for AI
 
