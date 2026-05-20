@@ -48,10 +48,12 @@ This is the shape used by `examples/render-single.json`, `examples/render-batch.
   "layout": [
     {
       "status": "BUSY",
+      "background": {},
       "items": []
     },
     {
       "status": "FREE",
+      "background": {},
       "items": []
     }
   ]
@@ -62,6 +64,7 @@ Output rule for this project:
 - When generating a user-defined custom template, return only the `layout` structure with nested `items`.
 - Do not include template-root metadata fields.
 - For custom calendar templates, include both `status: "BUSY"` and `status: "FREE"` blocks under `layout`.
+- Calendar status blocks may include `background` before `items`. Use this for state-level full-screen background and large colored regions instead of drawing full-screen `RECTANGLE` items.
 - For event-bound calendar `TEXT` items, do not use realistic sample event copy in `data.text` that could be mistaken for live synced data.
 - For `ONGOING_*` fields, use explicit placeholders such as `%ONGOING_TIME%` or `%ONGOING_EVENT_SUMMARY%`.
 - For `UPCOMING_*` fields, leave `data.text` as an empty string rather than filling a variable placeholder.
@@ -159,6 +162,8 @@ Important fields:
 
 Useful rules:
 - At least one of `TEXT.data.block.y` or `TEXT.data.block.h` must be a multiple of `8`.
+- For dynamic `TEXT` fields that can contain long calendar values, prefer `block.x` and `block.w` values that are multiples of `8` to avoid horizontal bitmap artifacts on device.
+- For pixel-based item blocks, keep `block.w * block.h / 8 < 6640`.
 - Text escape placeholders `<SN>` and `<NODE_ID>` are supported by Hubs above `v0.5.0`.
 - Official Hub SDK docs use `textAlign`, while current repository sample payloads use `text-align`. Keep this mismatch in mind when comparing examples.
 - If `id` matches a reserved calendar placeholder, SyncSign will replace `text` automatically during calendar rendering.
@@ -281,7 +286,7 @@ Sizing formula from the official guide:
 - QR width and height are both `(4 * version + 17) * scale`
 
 Memory note:
-- On 4.2-inch Displays, if the QR block area exceeds `25600`, it may fail to display.
+- For the computed QR square, keep `width * height / 8 < 6640`.
 
 ### `LINE`
 
@@ -334,6 +339,8 @@ Use it like this:
 Hard constraints:
 - Do not invent font names.
 - At least one of `block.y` or `block.h` must be a multiple of `8`.
+- For dynamic calendar text, prefer `block.x` and `block.w` multiples of `8`.
+- Keep `block.w * block.h / 8 < 6640`.
 - Calendar placeholder IDs belong only on `TEXT`.
 - If `id` is a reserved calendar placeholder, SyncSign will overwrite `text`.
 
@@ -439,7 +446,7 @@ Use it like this:
 
 Hard constraints:
 - The rendered width and height are both `(4 * version + 17) * scale`.
-- On `4.2` inch Displays, QR areas above `25600` square pixels may fail to display.
+- Keep `width * height / 8 < 6640` for the computed QR square.
 
 Project guidance:
 - Compute the QR size first, then confirm it fits the block you want.
@@ -557,6 +564,14 @@ When the user asks for a custom render:
 9. If the user wants Chinese text, prefer the documented `NOTO_*` fonts and note the `4MB Flash Display` constraint when relevant.
 10. If the request involves calendar templates, treat reserved `TEXT.id` values as data-binding hooks, not free-form labels.
 11. Per maintainer guidance, do not propose `BOTTOM_CUSTOM_BUTTONS` or `PERIPHERAL_CONTROL` as interaction solutions unless the maintainer explicitly asks for them.
+
+Before finalizing any calendar template, run this practical device-safety checklist:
+- Check every pixel-based `block` with `w * h / 8 < 6640`.
+- For every `TEXT` block, make sure at least one of `y` or `h` is a multiple of `8`.
+- For dynamic calendar `TEXT` fields, especially `ROOM_NAME`, `ONGOING_*`, and `UPCOMING_*`, prefer both `x` and `w` as multiples of `8`; this avoids horizontal bitmap artifacts seen on real devices.
+- Do not let two dynamic fields share the same horizontal row unless their `x/w` ranges do not overlap and the left field is narrow enough for realistic data.
+- For bottom schedule rows on `400 x 300`, reserve separate lanes: time and room on one row, summary on the next row, creator label and creator value on the final row. Avoid placing creator values in the same horizontal lane as room name.
+- When a field can hold long real values, use condensed fonts or smaller font sizes before shrinking the block too aggressively.
 
 Heuristics that work well:
 - Table or spreadsheet-like layout: `RECTANGLE` dividers plus centered `TEXT` blocks.
@@ -886,10 +901,11 @@ How to adapt it:
 - `background.rectangle.block` uses percentages, but most item blocks use pixels. Do not mix these mentally.
 - `RECTANGLE.data.block.x` and `RECTANGLE.data.block.w` must be multiples of `8`.
 - `IMAGE.data.block.w` must be a multiple of `8`.
+- Pixel-based item blocks must satisfy `block.w * block.h / 8 < 6640`.
 - `BITMAP_URI` image areas should stay within the target Display's maximum canvas size.
 - `TEXT.data.block.y` or `TEXT.data.block.h` must have at least one value that is a multiple of `8`.
 - `QRCODE` size is `(4 * version + 17) * scale`, so check that square against the available canvas area before placing it.
-- On `4.2` inch Displays, oversized QR blocks above `25600` square pixels may fail to render.
+- For QRCODE, apply the same area check to the computed QR square: `width * height / 8 < 6640`.
 - `options.pollRate` is documented but deprecated. Prefer leaving it alone unless the user explicitly needs polling behavior.
 - `options.refreshScreen` defaults to `true`. Setting it to `false` can reduce full refreshes but may leave e-ink ghosting or messy partial updates.
 - If you include a `background` section, SyncSign will do a refresh of the screen. If the user wants to update only a portion with less blink, consider omitting `background`.
