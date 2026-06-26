@@ -255,6 +255,7 @@ Important fields:
 - `block`
 
 Project guidance:
+- Do not include `data.id` on `BITMAP_URI` items. Device testing shows some Displays fail to parse `BITMAP_URI` when an `id` field is present.
 - If the user wants a custom image, prefer `BITMAP_URI` rather than `IMAGE`.
 - Keep the bitmap size within the target Display's maximum canvas size.
 - For `7.5` inch Displays in this project, cap the render area at `800 x 480`.
@@ -397,6 +398,7 @@ Use it like this:
 - Use one `BITMAP_URI` per monochrome layer.
 
 Hard constraints:
+- Do not include `data.id` on `BITMAP_URI` items.
 - Keep the rendered area within the target Display's maximum canvas size.
 - For `7.5` inch Displays in this project, cap the render area at `800 x 480`.
 - HTTPS may fail if the required root certificates are not installed on the Hub or Display.

@@ -6,3 +6,9 @@ venv/
 *.log
 .idea/
 .vscode/
+temp/
+display_sync_investigation_*/
+calendar_view.json
+node_details*.json
+render_summary.json
+m365_tokens.json
